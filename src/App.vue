@@ -14,13 +14,16 @@
   </p>
   <div v-if ="option=='list'">
  <h1>Lista de tareas</h1>
+ <p>Filtro
+  <input type="text" placeholder="Filtrar..." v-model="wordSearch">
+ </p>
  <!-- <p>
   <input type="text" placeholder="nueva tarea" @keyup.enter="insertTask" v-model="newTask">
  </p> -->
  <p>Se han encontrado {{tasks.length}} tareas</p>
  <p>{{textoNumeroTareas}}</p>
  <ul>
-  <ViewTask v-for="task of tasks" 
+  <ViewTask v-for="task of filteredTask" 
   :key = "task.id" 
   :task="task"
    @remove-task = "removeTask"/>
@@ -38,7 +41,6 @@
 
 <script setup>
 import { computed, ref } from 'vue';
-import CreateTask from './components/CreateTask.vue';
 import ViewTask from './components/ViewTask.vue';
 
 const option = ref('list');
@@ -49,6 +51,8 @@ const tasks = ref([
   {id: 3, name: 'Corregir examenes de recuperación'},
   {id: 4, name: 'Preparar examen chungo de Vue'},
 ]);
+
+const wordSearch = ref('');
 
 const newTask = ref('');
 
@@ -74,6 +78,10 @@ const newId = computed(() => {
 function removeTask(id){
   tasks.value = tasks.value.filter(t => t.id!==id);
 }
+
+const filteredTask = computed(() => {
+  return tasks.value.filter(t => t.name.toLocaleLowerCase().includes(wordSearch.value.toLocaleLowerCase()));
+})
 </script>
 
 <style lang="">
